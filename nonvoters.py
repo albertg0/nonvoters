@@ -5,6 +5,8 @@ from openpyxl import Workbook
 from tempfile import TemporaryFile
 
 col_num_vuids = 5
+
+print("Loading workbooks")
 previous_voters = xlrd.open_workbook('Pct 3,5,10 (list)2019.xlsx',{'strings_to_numbers':True})
 voters = xlrd.open_workbook('Voting History clean.xlsx')
 
@@ -32,14 +34,15 @@ n_nonvoters = 0
 
 #Add column labels to worksheet
 for col in range(previous_voters_sheet.ncols):
-            cell_data = previous_voters_sheet.cell_value(0,col)
-            if(cell_data):
-                print(cell_data)
-                cell_data=''
-                nonvoter_sheet.write(0,col,cell_data)
+    cell_data = previous_voters_sheet.cell_value(0,col)
+    if(cell_data):
+        nonvoter_sheet.write(0,col,cell_data)
+        cell_data=''
 
+print("Nonvoter sheet:" ,nonvoter_sheet.row(0))
 
 #Compare unique voter id, if recent voter not found add to nonvoters worksheet
+row_index = 1
 for i in range(previous_voters_sheet.nrows):
     found = False
     for j in range(voters_sheet.nrows):
@@ -51,8 +54,9 @@ for i in range(previous_voters_sheet.nrows):
         for col in range(previous_voters_sheet.ncols):
             cell_data = previous_voters_sheet.cell_value(i,col)
             if(cell_data):
-                nonvoter_sheet.write(i,col,cell_data)
+                nonvoter_sheet.write(row_index,col,cell_data)
                 cell_data=''
+        row_index +=1
 
 
 print("nonvoters found: ", n_nonvoters)
